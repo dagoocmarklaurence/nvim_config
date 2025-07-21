@@ -21,12 +21,13 @@ require("lazy").setup({
 	require("plugins.lualine"),
 	require("plugins.treesitter"),
 	require("plugins.telescope"),
-	require("plugins.lsp"),
+	require("plugins.lsp"),           -- lsp
 	require("plugins.autocompletion"),
-	require("plugins.none-ls"),
-	require("plugins.gitsigns"),
-	require("plugins.alpha"),
-	require("plugins.indent-blankline"),
-	require("plugins.misc"),
-	require("plugins.toggleterm"),
+	require("plugins.none-ls"),       --formatter
+	require("plugins.gitsigns"),      -- git
+	require("plugins.alpha"),         -- ASCII design upon opening of neovim
+	require("plugins.indent-blankline"), --indenting
+	require("plugins.misc"),          -- other plugins
+	require("plugins.toggleterm"),    -- open up a terminal
+	require("plugins.debug"),         -- debugging
 })
