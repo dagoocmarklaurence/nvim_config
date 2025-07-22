@@ -87,7 +87,7 @@ return {
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")
-
+		local dotnet = require("plugins.nvim-dap-dotnet")
 		-- local mason_path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg"
 		-- -- local mason_path = vim.fn.stdpath("data") .. "nvim-data/mason/packages/netcoredbg/netcoredbg"
 		-- local netcoredbg_adapter = {
@@ -117,6 +117,34 @@ return {
 		-- dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
 		-- dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
+		dap.configurations.cs = {
+			{
+				type = "coreclr",
+				name = "Launch .NET MVC App",
+				request = "launch",
+				program = function()
+					-- return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net8.0\\", "file")
+					return dotnet.build_dll_path()
+				end,
+				cwd = vim.fn.getcwd(),
+				stopAtEntry = false,
+				env = {
+					ASPNETCORE_ENVIRONMENT = "Development",
+					ASPNETCORE_URLS = "http://localhost:5260",
+				},
+			},
+		}
+		--
+		-- dap.configurations.cs = {
+		-- 	{
+		-- 		type = "coreclr",
+		-- 		name = "Attach to .NET WebApp",
+		-- 		request = "attach",
+		-- 		processId = function()
+		-- 			return vim.fn.input(14632)
+		-- 		end,
+		-- 	},
+		-- }
 		-- Dap UI setup
 		-- For more information, see |:help nvim-dap-ui|
 		dapui.setup({
@@ -143,13 +171,13 @@ return {
 		vim.api.nvim_set_hl(0, "DapBreak", { fg = "#e51400" })
 		vim.api.nvim_set_hl(0, "DapStop", { fg = "#ffcc00" })
 		local breakpoint_icons = vim.g.have_nerd_font
-				and {
-					Breakpoint = "",
-					BreakpointCondition = "",
-					BreakpointRejected = "",
-					LogPoint = "",
-					Stopped = "",
-				}
+			and {
+				Breakpoint = "",
+				BreakpointCondition = "",
+				BreakpointRejected = "",
+				LogPoint = "",
+				Stopped = "",
+			}
 			or {
 				Breakpoint = "●",
 				BreakpointCondition = "⊜",
