@@ -87,9 +87,11 @@ return {
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")
+		-- NOTE: require the line below if you want to debug automatically detecting dll
 		local dotnet = require("plugins.nvim-dap-dotnet")
-		-- local mason_path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg"
-		-- -- local mason_path = vim.fn.stdpath("data") .. "nvim-data/mason/packages/netcoredbg/netcoredbg"
+		local mason_path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg"
+		-- local mason_path = vim.fn.stdpath("data") .. "nvim-data/mason/packages/netcoredbg/netcoredbg"
+
 		-- local netcoredbg_adapter = {
 		-- 	type = "executable",
 		-- 	command = mason_path,
@@ -109,6 +111,7 @@ return {
 			-- online, please don't ask me how to install them :)
 			ensure_installed = {
 				-- Update this to ensure that you have the debuggers for the langs you want
+				--
 				-- "delve",
 				"coreclr",
 			},
@@ -118,7 +121,9 @@ return {
 		-- dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
 		dap.configurations.cs = {
+			-- NOTE: if you disable all this config it if you run debug it will prompt for which of all available dll to run
 			{
+				-- NOTE: To Debug with autodetecting the the dll
 				type = "coreclr",
 				name = "Launch .NET MVC App",
 				request = "launch",
@@ -133,6 +138,15 @@ return {
 					ASPNETCORE_URLS = "http://localhost:5260",
 				},
 			},
+			-- {
+			-- 	-- NOTE: To Debug to the running app by selecting the PID (Process)
+			-- 	type = "coreclr",
+			-- 	name = "Launch .NET MVC App",
+			-- 	request = "attach",
+			-- 	processId = function()
+			-- 		return tonumber(vim.fn.input("Enter process ID: "))
+			-- 	end,
+			-- },
 		}
 		--
 		-- dap.configurations.cs = {
