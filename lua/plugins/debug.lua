@@ -23,6 +23,7 @@ return {
 
 		-- Add your own debuggers here
 		"samsung/netcoredbg",
+		"firefox-devtools/vscode-firefox-debug",
 	},
 	keys = {
 		-- Basic debugging keymaps, feel free to change to your liking!
@@ -32,13 +33,6 @@ return {
 				require("dap").continue()
 			end,
 			desc = "Debug: Start/Continue",
-		},
-		{
-			"<F5>",
-			function()
-				require("dap").terminate()
-			end,
-			desc = "Debug: Terminate",
 		},
 		{
 			"<F2>",
@@ -62,11 +56,25 @@ return {
 			desc = "Debug: Step Out",
 		},
 		{
-			"<F9>",
+			"<F5>",
 			function()
-				require("dap").toggle_breakpoint()
+				require("dap").terminate()
 			end,
-			desc = "Debug: Toggle Breakpoint",
+			desc = "Debug: Terminate",
+		},
+		{
+			"<F6>",
+			function()
+				require("dap").run_last()
+			end,
+			desc = "Debug: Run Last",
+		},
+		{
+			"<F7>",
+			function()
+				require("dapui").toggle()
+			end,
+			desc = "Debug: See last session result.",
 		},
 		{
 			"<F8>",
@@ -77,11 +85,11 @@ return {
 		},
 		-- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
 		{
-			"<F7>",
+			"<F9>",
 			function()
-				require("dapui").toggle()
+				require("dap").toggle_breakpoint()
 			end,
-			desc = "Debug: See last session result.",
+			desc = "Debug: Toggle Breakpoint",
 		},
 	},
 	config = function()
@@ -90,13 +98,6 @@ return {
 		-- NOTE: require the line below if you want to debug automatically detecting dll
 		local dotnet = require("plugins.nvim-dap-dotnet")
 		local mason_path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg"
-		-- local mason_path = vim.fn.stdpath("data") .. "nvim-data/mason/packages/netcoredbg/netcoredbg"
-
-		-- local netcoredbg_adapter = {
-		-- 	type = "executable",
-		-- 	command = mason_path,
-		-- 	args = { "--interpreter=vscode" },
-		-- }
 
 		require("mason-nvim-dap").setup({
 			-- Makes a best effort to setup the various debuggers with
@@ -111,14 +112,14 @@ return {
 			-- online, please don't ask me how to install them :)
 			ensure_installed = {
 				-- Update this to ensure that you have the debuggers for the langs you want
-				--
 				-- "delve",
+				-- "pwa-node",
+				-- "pwa-chrome",
+				-- "js-debug-adapter",
+				"pwa-firefox",
 				"coreclr",
 			},
 		})
-
-		-- dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
-		-- dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
 		dap.configurations.cs = {
 			-- NOTE: if you disable all this config it if you run debug it will prompt for which of all available dll to run
@@ -148,17 +149,30 @@ return {
 			-- 	end,
 			-- },
 		}
-		--
-		-- dap.configurations.cs = {
-		-- 	{
-		-- 		type = "coreclr",
-		-- 		name = "Attach to .NET WebApp",
-		-- 		request = "attach",
-		-- 		processId = function()
-		-- 			return vim.fn.input(14632)
-		-- 		end,
-		-- 	},
-		-- }
+		dap.adapters["pwa-firefox"] = {
+			type = "executable",
+			command = "node",
+			args = {
+				vim.fn.stdpath("data") .. "\\mason\\packages\\firefox-debug-adapter\\dist\\adapter.bundle.js",
+			},
+		}
+
+		dap.configurations.javascript = {
+			{
+				type = "pwa-firefox",
+				name = "Launch Firefox",
+				request = "launch",
+				reAttach = true,
+				url = "http://localhost:5299",
+				webRoot = vim.fn.getcwd() .. "\\wwwroot",
+				firefoxExecutable = "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+			},
+		}
+
+		dap.configurations.typescript = dap.configurations.javascript
+		dap.configurations.typescriptreact = dap.configurations.javascript
+		dap.configurations.javascriptreact = dap.configurations.javascript
+
 		-- Dap UI setup
 		-- For more information, see |:help nvim-dap-ui|
 		dapui.setup({
