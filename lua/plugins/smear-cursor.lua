@@ -1,5 +1,6 @@
 return {
 	"sphamba/smear-cursor.nvim",
+	-- NOTE: Comment all option for default config
 	opts = {
 		-- NOTE: smootcursor withour smear
 		-- stiffness = 0.5,
