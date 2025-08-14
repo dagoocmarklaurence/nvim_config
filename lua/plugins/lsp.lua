@@ -28,46 +28,6 @@ return {
 		-- },
 	},
 	config = function()
-		-- local mason_registry = require("mason-registry")
-		--
-		-- local rzls_path = vim.fn.expand("$MASON/packages/rzls/libexec")
-		-- local cmd = {
-		-- 	"roslyn",
-		-- 	"--stdio",
-		-- 	"--logLevel=Information",
-		-- 	"--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
-		-- 	"--razorSourceGenerator=" .. vim.fs.joinpath(rzls_path, "Microsoft.CodeAnalysis.Razor.Compiler.dll"),
-		-- 	"--razorDesignTimePath="
-		-- 		.. vim.fs.joinpath(rzls_path, "Targets", "Microsoft.NET.Sdk.Razor.DesignTime.targets"),
-		-- 	"--extension",
-		-- 	vim.fs.joinpath(rzls_path, "RazorExtension", "Microsoft.VisualStudioCode.RazorExtension.dll"),
-		-- }
-		--
-		-- vim.lsp.config("roslyn", {
-		-- 	cmd = cmd,
-		-- 	handlers = require("rzls.roslyn_handlers"),
-		-- 	settings = {
-		-- 		["csharp|inlay_hints"] = {
-		-- 			csharp_enable_inlay_hints_for_implicit_object_creation = true,
-		-- 			csharp_enable_inlay_hints_for_implicit_variable_types = true,
-		--
-		-- 			csharp_enable_inlay_hints_for_lambda_parameter_types = true,
-		-- 			csharp_enable_inlay_hints_for_types = true,
-		-- 			dotnet_enable_inlay_hints_for_indexer_parameters = true,
-		-- 			dotnet_enable_inlay_hints_for_literal_parameters = true,
-		-- 			dotnet_enable_inlay_hints_for_object_creation_parameters = true,
-		-- 			dotnet_enable_inlay_hints_for_other_parameters = true,
-		-- 			dotnet_enable_inlay_hints_for_parameters = true,
-		-- 			dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
-		-- 			dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
-		-- 			dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
-		-- 		},
-		-- 		["csharp|code_lens"] = {
-		-- 			dotnet_enable_references_code_lens = true,
-		-- 		},
-		-- 	},
-		-- })
-		-- vim.lsp.enable("roslyn")
 		-- Brief aside: **What is LSP?**
 		--
 		-- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -156,7 +116,8 @@ return {
 					if vim.fn.has("nvim-0.11") == 1 then
 						return client:supports_method(method, bufnr)
 					else
-						return client.supports_method(method, { bufnr = bufnr })
+						-- return client:supports_method(method, { bufnr = bufnr })
+						return client:supports_method(method, bufnr)
 					end
 				end
 
@@ -245,7 +206,7 @@ return {
 		--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
 		--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
 		local capabilities = require("blink.cmp").get_lsp_capabilities()
-
+		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 		-- Enable the following language servers
 		--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 		--
@@ -299,7 +260,10 @@ return {
 								unpack(vim.api.nvim_get_runtime_file("", true)),
 							},
 						},
-						diagnostics = { disable = { "missing-fields" } },
+						diagnostics = {
+							disable = { "missing-fields" },
+							globals = { "vim" },
+						},
 						format = {
 							enable = false,
 						},
@@ -324,24 +288,34 @@ return {
 		-- You can add other tools here that you want Mason to install
 		-- for you, so that they are available from within Neovim.
 		local ensure_installed = vim.tbl_keys(servers or {})
-		vim.list_extend(ensure_installed, {
-			"stylua", -- Used to format Lua code
-		})
+		-- vim.list_extend(ensure_installed, {
+		-- 	"stylua", -- Used to format Lua code
+		-- })
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-		require("mason-lspconfig").setup({
-			ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-			automatic_installation = false,
-			handlers = {
-				function(server_name)
-					local server = servers[server_name] or {}
-					-- This handles overriding only values explicitly passed
-					-- by the server configuration above. Useful when disabling
-					-- certain features of an LSP (for example, turning off formatting for ts_ls)
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
-				end,
-			},
-		})
+		-- require("mason-lspconfig").setup({
+		-- 	ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+		-- 	automatic_installation = false,
+		-- 	handlers = {
+		-- 		function(server_name)
+		-- 			local server = servers[server_name] or {}
+		-- 			-- This handles overriding only values explicitly passed
+		-- 			-- by the server configuration above. Useful when disabling
+		-- 			-- certain features of an LSP (for example, turning off formatting for ts_ls)
+		-- 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+		-- 			require("lspconfig")[server_name].setup(server)
+		-- 		end,
+		-- 	},
+		-- })
+		for server, cfg in pairs(servers) do
+			-- For each LSP server (cfg), we merge:
+			-- 1. A fresh empty table (to avoid mutating capabilities globally)
+			-- 2. Your capabilities object with Neovim + cmp features
+			-- 3. Any server-specific cfg.capabilities if defined in `servers`
+			cfg.capabilities = vim.tbl_deep_extend("force", {}, capabilities, cfg.capabilities or {})
+
+			vim.lsp.config(server, cfg)
+			vim.lsp.enable(server)
+		end
 	end,
 }

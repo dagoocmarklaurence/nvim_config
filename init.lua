@@ -1,5 +1,6 @@
 require("core.options") -- Load general options
 require("core.keymaps") -- Load general keymaps
+require("core.snippets") -- Load general snippets
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -21,15 +22,15 @@ require("lazy").setup({
 	require("plugins.lualine"),
 	require("plugins.treesitter"),
 	require("plugins.telescope"),
-	require("plugins.lsp"),           -- lsp
+	require("plugins.lsp"), -- lsp
 	require("plugins.autocompletion"),
-	require("plugins.none-ls"),       --formatter
-	require("plugins.gitsigns"),      -- git
-	require("plugins.alpha"),         -- ASCII design upon opening of neovim
+	require("plugins.none-ls"), --formatter
+	require("plugins.gitsigns"), -- git
+	require("plugins.alpha"), -- ASCII design upon opening of neovim
 	require("plugins.indent-blankline"), --indenting
-	require("plugins.misc"),          -- other plugins
-	require("plugins.toggleterm"),    -- open up a terminal
-	require("plugins.debug"),         -- debugging
-	require("plugins.flash"),         -- Easily go the the specific line
+	require("plugins.misc"), -- other plugins
+	require("plugins.toggleterm"), -- open up a terminal
+	require("plugins.debug"), -- debugging
+	require("plugins.flash"), -- Easily go the the specific line
 	require("plugins.smear-cursor"),
 })
