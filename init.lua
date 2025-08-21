@@ -33,4 +33,5 @@ require("lazy").setup({
 	require("plugins.debug"), -- debugging
 	require("plugins.flash"), -- Easily go the the specific line
 	require("plugins.smear-cursor"),
+	require("plugins.dadbod"),
 })

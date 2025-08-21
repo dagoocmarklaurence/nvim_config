@@ -129,8 +129,10 @@ return {
 				name = "Launch .NET MVC App",
 				request = "launch",
 				program = function()
-					-- return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net8.0\\", "file")
-					return dotnet.build_dll_path()
+					-- NOTE: change to desired framework version e.g. (net5.0, 8.0, 9.0, etc...)
+					return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net5.0\\", "file")
+					-- NOTE: enable below if you want to audo detect debugging with latest framework.
+					-- return dotnet.build_dll_path()
 				end,
 				cwd = vim.fn.getcwd(),
 				stopAtEntry = false,
@@ -199,13 +201,13 @@ return {
 		vim.api.nvim_set_hl(0, "DapBreak", { fg = "#e51400" })
 		vim.api.nvim_set_hl(0, "DapStop", { fg = "#ffcc00" })
 		local breakpoint_icons = vim.g.have_nerd_font
-			and {
-				Breakpoint = "",
-				BreakpointCondition = "",
-				BreakpointRejected = "",
-				LogPoint = "",
-				Stopped = "",
-			}
+				and {
+					Breakpoint = "",
+					BreakpointCondition = "",
+					BreakpointRejected = "",
+					LogPoint = "",
+					Stopped = "",
+				}
 			or {
 				Breakpoint = "●",
 				BreakpointCondition = "⊜",
