@@ -224,7 +224,13 @@ return {
 			cssls = {},
 			tailwindcss = {},
 			dockerls = {},
-			sqlls = {},
+			-- sqlls = {},
+			-- sqlls = {
+			-- 	on_attach = function(client, bufnr)
+			-- 		-- turn off diagnostics
+			-- 		client.server_capabilities.diagnosticProvider = false
+			-- 	end,
+			-- },
 			terraformls = {},
 			jsonls = {},
 			yamlls = {},
