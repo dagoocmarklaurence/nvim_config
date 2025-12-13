@@ -30,4 +30,23 @@ return {
 		-- vim.cmd("colorscheme kanagawa-dragon")
 		-- vim.cmd("colorscheme kanagawa-lotus")
 	end,
+
+	-- "nickkadutskyi/jb.nvim",
+	-- lazy = false,
+	-- priority = 1000,
+	-- opts = {},
+	-- config = function()
+	-- 	-- require("jb").setup({transparent = true})
+	-- 	vim.cmd("colorscheme jb")
+	-- end,
+
+	-- "realbucksavage/riderdark.vim",
+	-- lazy = false,
+	-- priority = 1000,
+	-- opts = {},
+	-- config = function()
+	-- 	-- require("jb").setup({transparent = true})
+	-- 	-- vim.cmd("colorscheme jb")
+	-- 	vim.cmd("colorscheme riderdark")
+	-- end,
 }

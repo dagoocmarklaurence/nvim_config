@@ -2,7 +2,8 @@ return {
 	"akinsho/toggleterm.nvim",
 	opts = {
 		open_mapping = [[<C-\>]],
-		direction = "float",
+		-- direction = "float",
+		direction = "horizontal",
 		shade_filetypes = {},
 		shade_terminals = true,
 		shading_factor = "1",
@@ -10,8 +11,8 @@ return {
 		persist_size = true,
 		float_opts = {
 			border = "curved", -- or "single", "double", etc.
-			width = 90, -- set your desired width
-			height = 35, -- set your desired height
+			width = 120, -- set your desired width
+			height = 40, -- set your desired height
 			winblend = 3,
 		},
 	},

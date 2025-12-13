@@ -129,8 +129,8 @@ return {
 				name = "Launch .NET MVC App",
 				request = "launch",
 				program = function()
-					-- NOTE: change to desired framework version e.g. (net5.0, 8.0, 9.0, etc...)
-					return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net5.0\\", "file")
+					-- NOTE: change to desired framework version e.g. (net5.0, 8.0, 9.0, 10.0 etc...)
+					return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net10.0\\", "file")
 					-- NOTE: enable below if you want to audo detect debugging with latest framework.
 					-- return dotnet.build_dll_path()
 				end,
@@ -165,9 +165,17 @@ return {
 				name = "Launch Firefox",
 				request = "launch",
 				reAttach = true,
-				url = "http://localhost:5299",
-				webRoot = vim.fn.getcwd() .. "\\wwwroot",
+				-- url = "http://localhost:5299",
+				-- webRoot = vim.fn.getcwd() .. "\\wwwroot",
+				-- firefoxExecutable = "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+
+				url = "http://localhost:4200",
+				-- webRoot = vim.fn.getcwd() .. "\\dist",
+				webRoot = vim.fn.getcwd() .. "\\src",
 				firefoxExecutable = "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+				skipFiles = { "<node_internals>/**" },
+				trace = true,
+				-- port = 6000,
 			},
 		}
 

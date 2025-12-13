@@ -10,22 +10,10 @@ return {
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 
 		-- Useful status updates for LSP.
-		{ "j-hui/fidget.nvim", opts = {} },
+		{ "j-hui/fidget.nvim",    opts = {} },
 
 		-- Allows extra capabilities provided by blink.cmp
 		"saghen/blink.cmp",
-
-		-- FOR CSHTML AND RAZOR FILES
-		-- "seblyng/roslyn.nvim",
-		-- ft = { "cs", "razor" },
-		-- dependencies = {
-		-- 	{
-		-- 		-- By loading as a dependencies, we ensure that we are available to set
-		-- 		-- the handlers for Roslyn.
-		-- 		"tris203/rzls.nvim",
-		-- 		config = true,
-		-- 	},
-		-- },
 	},
 	config = function()
 		-- Brief aside: **What is LSP?**
@@ -116,8 +104,7 @@ return {
 					if vim.fn.has("nvim-0.11") == 1 then
 						return client:supports_method(method, bufnr)
 					else
-						-- return client:supports_method(method, { bufnr = bufnr })
-						return client:supports_method(method, bufnr)
+						return client.supports_method(method, { bufnr = bufnr })
 					end
 				end
 
@@ -205,8 +192,7 @@ return {
 		--  By default, Neovim doesn't support everything that is in the LSP specification.
 		--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
 		--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-		local capabilities = require("blink.cmp").get_lsp_capabilities()
-		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
 		-- Enable the following language servers
 		--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 		--
@@ -218,23 +204,49 @@ return {
 		--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 		local servers = {
 			-- csharp_ls = { filetypes = { "cs", "vb" } },
-			omnisharp = { filetypes = { "cs", "vb" } },
+			omnisharp = { filetypes = { "cs", "vb", "cshtml" } },
 			-- html = { filetypes = { "cshtml", "html", "twig", "hbs" } },
-			html = { filetypes = { "html", "twig", "hbs" } },
+			html = { filetypes = { "twig", "hbs" } },
 			cssls = {},
-			tailwindcss = {},
+			-- tailwindcss = {},
+			tailwindcss = {
+				filetypes = { "html", "typescript", "javascript", "css", "scss" },
+			},
+			-- angularls = {},
+			angularls = {
+				filetypes = { "html", "typescript" },
+				root_dir = require("lspconfig.util").root_pattern("angular.json", "project.json"),
+			},
 			dockerls = {},
-			-- sqlls = {},
-			-- sqlls = {
-			-- 	on_attach = function(client, bufnr)
-			-- 		-- turn off diagnostics
-			-- 		client.server_capabilities.diagnosticProvider = false
-			-- 	end,
-			-- },
+			sqlls = {},
 			terraformls = {},
 			jsonls = {},
 			yamlls = {},
-			eslint = {},
+			ts_ls = {},
+			emmet_ls = {
+				filetypes = {
+					"html",
+					"css",
+					"scss",
+					"typescriptreact",
+					"javascriptreact",
+					"javascript",
+					"typescript",
+					"vue",
+					"svelte",
+					"astro",
+					"templ", -- optional
+				},
+				init_options = {
+					html = {
+						options = {
+							["bem.enabled"] = true, -- optional: enable BEM-style Emmet
+						},
+					},
+				},
+			},
+
+			-- eslint = {},
 			-- netcoredbg = {},
 			-- clangd = {},
 			-- gopls = {},
@@ -261,10 +273,11 @@ return {
 						runtime = { version = "LuaJIT" },
 						workspace = {
 							checkThirdParty = false,
-							library = {
-								"${3rd}/luv/library",
-								unpack(vim.api.nvim_get_runtime_file("", true)),
-							},
+							library = vim.api.nvim_get_runtime_file("", true),
+							-- library = {
+							-- 	"${3rd}/luv/library",
+							-- 	unpack(vim.api.nvim_get_runtime_file("", true)),
+							-- },
 						},
 						diagnostics = {
 							disable = { "missing-fields" },
@@ -294,34 +307,25 @@ return {
 		-- You can add other tools here that you want Mason to install
 		-- for you, so that they are available from within Neovim.
 		local ensure_installed = vim.tbl_keys(servers or {})
-		-- vim.list_extend(ensure_installed, {
-		-- 	"stylua", -- Used to format Lua code
-		-- })
+		vim.list_extend(ensure_installed, {
+			"stylua", -- Used to format Lua code
+			"emmet_ls",
+		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-		-- require("mason-lspconfig").setup({
-		-- 	ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-		-- 	automatic_installation = false,
-		-- 	handlers = {
-		-- 		function(server_name)
-		-- 			local server = servers[server_name] or {}
-		-- 			-- This handles overriding only values explicitly passed
-		-- 			-- by the server configuration above. Useful when disabling
-		-- 			-- certain features of an LSP (for example, turning off formatting for ts_ls)
-		-- 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-		-- 			require("lspconfig")[server_name].setup(server)
-		-- 		end,
-		-- 	},
-		-- })
-		for server, cfg in pairs(servers) do
-			-- For each LSP server (cfg), we merge:
-			-- 1. A fresh empty table (to avoid mutating capabilities globally)
-			-- 2. Your capabilities object with Neovim + cmp features
-			-- 3. Any server-specific cfg.capabilities if defined in `servers`
-			cfg.capabilities = vim.tbl_deep_extend("force", {}, capabilities, cfg.capabilities or {})
-
-			vim.lsp.config(server, cfg)
-			vim.lsp.enable(server)
-		end
+		require("mason-lspconfig").setup({
+			ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+			automatic_installation = false,
+			handlers = {
+				function(server_name)
+					local server = servers[server_name] or {}
+					-- This handles overriding only values explicitly passed
+					-- by the server configuration above. Useful when disabling
+					-- certain features of an LSP (for example, turning off formatting for ts_ls)
+					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+					require("lspconfig")[server_name].setup(server)
+				end,
+			},
+		})
 	end,
 }
