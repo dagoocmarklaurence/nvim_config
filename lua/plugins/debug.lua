@@ -138,7 +138,8 @@ return {
 				stopAtEntry = false,
 				env = {
 					ASPNETCORE_ENVIRONMENT = "Development",
-					ASPNETCORE_URLS = "http://localhost:5260",
+					-- NOTE always change the port of depending on the port of on launchSetting.json
+					ASPNETCORE_URLS = "http://localhost:5154",
 				},
 			},
 			-- {
