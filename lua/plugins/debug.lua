@@ -122,7 +122,9 @@ return {
 		})
 
 		dap.configurations.cs = {
-			-- NOTE: if you disable all this config it if you run debug it will prompt for which of all available dll to run
+			-- NOTE: you must be in the directory of  the api/webapp project to successfully debug.
+			-- like if you have an app SampleApp.Api you should be in that directory then open the nvim. (C:\Users\Desktop\Sample\Sample.Api)
+			-- not in C:\Users\Desktop\Sample\Sample.Appilication or \Sample.Infrastructure\
 			{
 				-- NOTE: To Debug with autodetecting the the dll
 				type = "coreclr",
