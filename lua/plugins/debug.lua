@@ -132,9 +132,9 @@ return {
 				request = "launch",
 				program = function()
 					-- NOTE: change to desired framework version e.g. (net5.0, 8.0, 9.0, 10.0 etc...)
-					return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net10.0\\", "file")
+					-- return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "\\bin\\Debug\\net10.0\\", "file")
 					-- NOTE: enable below if you want to audo detect debugging with latest framework.
-					-- return dotnet.build_dll_path()
+					return dotnet.build_dll_path()
 				end,
 				cwd = vim.fn.getcwd(),
 				stopAtEntry = false,

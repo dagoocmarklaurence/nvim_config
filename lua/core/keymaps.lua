@@ -88,8 +88,11 @@ vim.keymap.set("n", "<leader>o", function()
 	vim.fn.jobstart({ "cmd.exe", "/C", "start", url }, { detach = true })
 end, { desc = "Open URL under cursor" })
 
+--For dotnet debugging / disable when not use .Net framework
+vim.keymap.set("n", "<F10>", ":w<CR>:!dotnet build<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<F12>", ":w<CR>:!dotnet run<CR>", { noremap = true, silent = false })
+
 --Dap
--- keymap("n", "<F1>", ":lua  require('dap').continue()<cr>", opts)
 -- keymap("n", "<F2>", ":lua  require('dap').step_over()<cr>", opts)
 -- keymap("n", "<F3>", ":lua  require('dap').step_into()<cr>", opts)
 -- keymap("n", "<F4>", ":lua  require('dap').step_out()<cr>", opts)

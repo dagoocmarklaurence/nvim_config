@@ -56,6 +56,23 @@ return {
 			-- "⡟⢱⣿⡿⠿⠿⠿⠿⠿⠿⣿⣿⣷⠸⠈⠐⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠉⠈⠛⠻⢿⣿⣿⣿⡿⠿⠿⠿",
 		}
 
+		-- Center ASCII design
+		dashboard.section.header.opts.position = "center"
+
+		-- Remove recent files (MRU) sections
+		dashboard.section.mru.val = { { type = "padding", val = 0 } }
+		dashboard.section.mru_cwd.val = { { type = "padding", val = 0 } }
+
+		-- Remove bottom buttons ([q] Quit, etc.)
+		dashboard.section.top_buttons.val = { { type = "padding", val = 0 } }
+		dashboard.section.bottom_buttons.val = { { type = "padding", val = 0 } }
+
+		-- Clear all sections so only the header remains
+		-- dashboard.section.top_buttons.val = { { type = "padding", val = 0 } }
+		-- dashboard.section.mru.val = { { type = "padding", val = 0 } }
+		-- dashboard.section.mru_cwd.val = { { type = "padding", val = 0 } }
+		-- dashboard.section.bottom_buttons.val = { { type = "padding", val = 0 } }
+
 		alpha.setup(dashboard.opts)
 	end,
 }
