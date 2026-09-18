@@ -69,6 +69,13 @@ vim.keymap.set("v", ">", ">gv", opts)
 -- Keep last yanked when pasting
 vim.keymap.set("v", "p", '"_dP', opts)
 
+-- Map Ctrl+Backspace to delete previous word in Insert and Command-line mode
+vim.keymap.set("i", "<C-BS>", "<C-W>", { noremap = true })
+vim.keymap.set("c", "<C-BS>", "<C-W>", { noremap = true })
+
+-- Fallback for terminals that send <C-h> or ASCII 8 on Ctrl+Backspace
+vim.keymap.set("i", "<C-h>", "<C-W>", { noremap = true })
+
 -- Diagnostic keymaps
 -- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
 -- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
